@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API연습</title>
+    <style>
+        body {
+          text-align: center;
+        }
+        a {
+            text-decoration: none;
+        }
+        </style>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>도서 표지 검색</h1>
+    검색어를 입력해주세요.<br>
+    이미지를 클릭하면 해당 도서정보페이지로 이동합니다.
+    <br>
+    <input type="text" placeholder="책을 검색하세요" id="bookName">
+    <button id="search" type="button">검색</button>
+    <button onClick="window.location.reload()">새로 고침</button>
+    <hr>
+    <p></p>
+    <button type="button" id="up"><a href="#">TOP</a></button>
+
+
+    <script>
+        $(document).ready(function(){
+            $("#search").click(function(){
+                $.ajax({
+                method: "GET",
+                url: "https://dapi.kakao.com/v3/search/book?target=title",
+                data: { query : $("#bookName").val()},
+                headers :{ Authorization: "KakaoAK 845fd65086b21c8acc1b1b3a8931472c" }
+                })
+                .done(function( msg ) {
+                    console.log(msg);
+                    for(i=0; i<+msg.documents.length; i++){
+                        $( "p" ).append("<a href='"+msg.documents[i].url+"'title='"+msg.documents[i].title+"' target='_blank'><img src='"+msg.documents[i].thumbnail+"'/></a>");
+                    }
+                    $("#bookName").val('');
+                    $("#bookName").focus();
+                });
+            });
+
+            $("#bookName").keydown(function(key) {
+            if (key.keyCode == 13){$("#search").click()};
+            });
+        });
+    </script>
+</body>
+</html>
